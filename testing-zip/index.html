@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Создание ZIP архива</title>
+  <script src="jszip.js"></script>
+  <script src="FileSaver.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    button {
+      background-color: #4CAF50;
+      border: none;
+      color: white;
+      padding: 15px 32px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin: 20px 0;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .info {
+      background-color: #f5f5f5;
+      padding: 15px;
+      border-radius: 4px;
+      margin: 20px 0;
+    }
+  </style>
+</head>
+<body>
+<h1>Тестирование создания ZIP архива</h1>
+
+<div class="info">
+  <p>Нажмите кнопку ниже для создания и скачивания ZIP архива.</p>
+  <p>Архив будет содержать структуру файлов и папок на основе тестовых данных.</p>
+</div>
+
+<button id="downloadBtn">Скачать ZIP архив</button>
+
+<div id="status"></div>
+
+<script>
+  // Тестовые данные
+  const testData = {
+    "notesCount": 8,
+    "notes": [
+      {
+        "id": "41114637960487616",
+        "title": "",
+        "content": "\"Программа ТВ\"\nПриложение ВК\n\nПросмотр по категориям сбор с каналов\nНапример\nВсе Кино Сериалы Новости Детям Спорт Токшоу Познавательное Юмор\n\nРасписание отдельного канала\n\nРасписание для выбранной передачи по дням\n\nЗапоминаем посещаемые категории, двигаем в начало списка\n\nЗапоминаем посещаемые каналы, двигаем вверх списка\n\nДополнительно:\nПриложение для мобилок",
+        "folderId": "41114636034908896",
+        "createDate": 1601574756219,
+        "modifyDate": 1645444627442
+      },
+      {
+        "id": "41114637961928960",
+        "title": "",
+        "content": "Приложение запоминайка\nИгра на запоминание по карточкам\nНаборы карточек:\nМарки машин\nАктëры\nИсторические личности\nАнглийские слова\nТоки пона\nМорзе\nВоинские звания\nСпортсмены",
+        "folderId": "41114636034908896",
+        "createDate": 1602322856492,
+        "modifyDate": 1602323097291
+      },
+      {
+        "id": "41114639785534208",
+        "title": "Сложный код",
+        "content": "Хороший программист гордится простым кодом, плохой программист гордится сложным кодом.",
+        "folderId": "41114636038054112",
+        "createDate": 1618134246142,
+        "modifyDate": 1619683001625
+      },
+      {
+        "id": "41114643404170176",
+        "title": "Отображение этапов обратной связи",
+        "content": "Если показывать пользователю обратную связь по этапам какого-то незавершëнного действия, улучшается восприятие от просмотра истории действия\n\nПример - жалобы на госуслугах\n\nВидим шаги которые проходит  обращение без деталей.\n\nМы не знаем кто занимается и что думает про обращение, но сам факт прикосновения человека к обращению говорит нам о том, что обращение не потерялось и находится в рабочем процессе.",
+        "folderId": "41114636034908896",
+        "createDate": 1620851996335,
+        "modifyDate": 1739912653010
+      },
+      {
+        "id": "41114956999041888",
+        "title": "",
+        "content": "Лучше написанного кода может быть только код не написанный. \n",
+        "folderId": "41114636038054112",
+        "createDate": 1674671580739,
+        "modifyDate": 1739915882358
+      },
+      {
+        "id": "46635049193447424",
+        "title": "Пила Tajima",
+        "content": "<text indent=\"1\">длина полотна 24</text>",
+        "folderId": 0,
+        "createDate": 1750580067090,
+        "modifyDate": 1750580090077
+      },
+      {
+        "id": "41114625692934208",
+        "title": "Dashboard",
+        "content": "<text indent=\"1\">Custom ReadOnly Dashboard.</text>",
+        "folderId": 0,
+        "createDate": 1700662046634,
+        "modifyDate": 1758094211416
+      }
+    ],
+    "folders": [
+      {
+        "id": "41114636036219776",
+        "title": "Project1"
+      },
+      {
+        "id": "41114636038054112",
+        "title": "Цитаты"
+      },
+      {
+        "id": "41114636034908896",
+        "title": "Идеи"
+      }
+    ]
+  };
+
+  // Функция для создания ZIP архива
+  function createZipArchive(data) {
+    const zip = new JSZip();
+
+    // Создаем карту папок для быстрого доступа
+    const folderMap = {};
+    data.folders.forEach(folder => {
+      folderMap[folder.id] = folder.title;
+    });
+
+    // Обрабатываем каждую заметку
+    data.notes.forEach(note => {
+      let fileName = '';
+
+      // Формируем имя файла
+      if (note.title && note.title.trim() !== '') {
+        // Используем title как имя файла, заменяя недопустимые символы
+        fileName = note.title.replace(/[<>:"/\\|?*]/g, '_') + '.txt';
+      } else {
+        // Если title пустой, используем id
+        fileName = `note_${note.id}.txt`;
+      }
+
+      // Определяем путь к файлу в зависимости от folderId
+      if (note.folderId && note.folderId !== 0 && folderMap[note.folderId]) {
+        // Файл находится в папке
+        const folderName = folderMap[note.folderId];
+        zip.folder(folderName).file(fileName, note.content);
+      } else {
+        // Файл находится в корне
+        zip.file(fileName, note.content);
+      }
+    });
+
+    return zip;
+  }
+
+  // Обработчик кнопки скачивания
+  document.getElementById('downloadBtn').addEventListener('click', function() {
+    const statusDiv = document.getElementById('status');
+    statusDiv.innerHTML = 'Создание архива...';
+
+    try {
+      // Создаем ZIP архив
+      const zip = createZipArchive(testData);
+
+      // Генерируем и скачиваем архив
+      zip.generateAsync({type: 'blob'})
+              .then(function(content) {
+                saveAs(content, 'notes_archive.zip');
+                statusDiv.innerHTML = 'Архив успешно создан и скачан!';
+              })
+              .catch(function(error) {
+                console.error('Ошибка при создании архива:', error);
+                statusDiv.innerHTML = 'Произошла ошибка при создании архива.';
+              });
+    } catch (error) {
+      console.error('Ошибка:', error);
+      statusDiv.innerHTML = 'Произошла ошибка: ' + error.message;
+    }
+  });
+</script>
+</body>
+</html>
