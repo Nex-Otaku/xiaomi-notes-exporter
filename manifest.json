@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "Xiaomi Notes Exporter",
+  "description": "Exporting notes from Xiaomi Cloud",
+  "version": "1.0",
+  "author": "Nex Otaku",
+  "action": {
+	"default_title": "Xiaomi Notes Exporter",
+	"default_icon": "icon.png",
+	"default_popup": "index.html"
+  },
+  "icons": {
+	"128": "icon.png"
+  },
+  "permissions": ["activeTab", "scripting"]
+}
