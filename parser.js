@@ -180,18 +180,64 @@ function downloadJson(jsonObject, filename) {
     URL.revokeObjectURL(objectUrl);
 }
 
+function createZipArchive(data) {
+    const zip = new JSZip();
+
+    const folderMap = {};
+
+    data.folders.forEach(folder => {
+        folderMap[folder.id] = folder.title;
+    });
+
+    data.notes.forEach(note => {
+        let fileName = '';
+
+        if (note.title && note.title.trim() !== '') {
+            fileName = note.title.replace(/[<>:"/\\|?*]/g, '_') + '.txt';
+        } else {
+            fileName = `note_${note.id}.txt`;
+        }
+
+        if (note.folderId && note.folderId !== 0 && folderMap[note.folderId]) {
+            const folderName = folderMap[note.folderId];
+            zip.folder(folderName).file(fileName, note.content);
+        } else {
+            zip.file(fileName, note.content);
+        }
+    });
+
+    return zip;
+}
+
 async function runExport() {
     const content = await tryParse();
 
     if (content === null) {
-        console.log('Нет данных для выгрузки.');
+        console.log('No notes found. Nothing to export.');
 
         return;
     }
 
-    downloadJson(content, "notes.json");
+    try {
+        const zip = createZipArchive(content);
 
-    alert('Выгрузка завершена.');
+        zip.generateAsync({type: 'blob'})
+            .then(function(content) {
+                saveAs(content, 'notes_archive.zip');
+                // statusDiv.innerHTML = 'ZIP is created and downloaded!';
+            })
+            .catch(function(error) {
+                console.error('Failed to create ZIP:', error);
+                // statusDiv.innerHTML = 'Failed to create ZIP.';
+            });
+    } catch (error) {
+        console.error('Error:', error);
+        // statusDiv.innerHTML = 'Unexpected error: ' + error.message;
+    }
+
+    // downloadJson(content, "notes.json");
+
+    alert('Download completed.');
 }
 
 (
