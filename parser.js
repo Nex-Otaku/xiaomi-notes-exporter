@@ -179,22 +179,6 @@ if (!("xiaomiNotesParser" in window)) {
             return result;
         }
 
-        function downloadJson(jsonObject, filename) {
-            const jsonString = JSON.stringify(jsonObject, null, 4);
-            const blob = new Blob([jsonString], {type: "application/json"});
-            const objectUrl = URL.createObjectURL(blob);
-
-            const a = document.createElement("a");
-            a.href = objectUrl;
-            a.download = filename;
-
-            document.body.appendChild(a); // Append to body is optional, but ensures it's in the DOM for click
-            a.click();
-            document.body.removeChild(a); // Remove after click if it was appended
-
-            URL.revokeObjectURL(objectUrl);
-        }
-
         function createZipArchive(data) {
             const zip = new JSZip();
 
