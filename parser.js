@@ -171,7 +171,7 @@ if (!("xiaomiNotesParser" in window)) {
                 result = await parse();
             } catch (e) {
                 console.error(e);
-                alert('Ошибка при сканировании страницы');
+                alert('Failed to parse page. Please contact support at leonid.chernenko.vrn@gmail.com');
 
                 return null;
             }
