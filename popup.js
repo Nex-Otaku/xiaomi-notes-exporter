@@ -37,10 +37,11 @@
                 {
                     target: {tabId: tabs[0].id},
                     files: [
-                        'lib/jszip.js',
                         'lib/FileSaver.js',
-                        'lib/convert.js',
+                        'lib/PrepareDialog.js',
                         'lib/ProgressDialog.js',
+                        'lib/convert.js',
+                        'lib/jszip.js',
                         'parser.js'
                     ],
                 },
