@@ -126,7 +126,12 @@ if (!("xiaomiNotesParser" in window)) {
                 return;
             }
 
+            const prepareDialog = window.prepareDialog;
+            prepareDialog.show();
+
             const notesDirectoryInfo = await getNotesDirectoryInfo();
+
+            prepareDialog.hide();
 
             if (notesDirectoryInfo === null) {
                 return null;
