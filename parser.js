@@ -6,10 +6,14 @@ if (!("xiaomiNotesParser" in window)) {
 
         let isRunningExport = false;
 
+        function getBaseUrl() {
+            return window.location.origin;
+        }
+
         async function fetchNote(noteId) {
             try {
                 const ts = Date.now();
-                const response = await fetch('https://us.i.mi.com/note/note/' + noteId + '/?ts=' + ts);
+                const response = await fetch(getBaseUrl() + '/note/note/' + noteId + '/?ts=' + ts);
 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -37,8 +41,9 @@ if (!("xiaomiNotesParser" in window)) {
         async function getNotesPageInfo(syncTag) {
             try {
                 const ts = Date.now();
+                const baseUrl = getBaseUrl();
 
-                const url = (syncTag !== null) ? 'https://us.i.mi.com/note/full/page?ts=' + ts + '&syncTag=' + syncTag + '&limit=200' : 'https://us.i.mi.com/note/full/page?ts=' + ts + '&limit=200';
+                const url = (syncTag !== null) ? baseUrl + '/note/full/page?ts=' + ts + '&syncTag=' + syncTag + '&limit=200' : baseUrl + '/note/full/page?ts=' + ts + '&limit=200';
 
                 const response = await fetch(url);
 
@@ -119,8 +124,14 @@ if (!("xiaomiNotesParser" in window)) {
             return directoryInfo;
         }
 
+        function isSupportedHost() {
+            const supportedHosts = ['us.i.mi.com', 'i.mi.com'];
+
+            return supportedHosts.includes(window.location.host);
+        }
+
         async function parse() {
-            if (window.location.host !== 'us.i.mi.com') {
+            if (!isSupportedHost()) {
                 const warningDialog = window.warningDialog;
                 warningDialog.show();
 
