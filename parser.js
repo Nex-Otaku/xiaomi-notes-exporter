@@ -124,7 +124,7 @@ if (!("xiaomiNotesParser" in window)) {
                 const warningDialog = window.warningDialog;
                 warningDialog.show();
 
-                return;
+                return null;
             }
 
             const prepareDialog = window.prepareDialog;
