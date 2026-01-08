@@ -40,6 +40,7 @@
                         'lib/FileSaver.js',
                         'lib/PrepareDialog.js',
                         'lib/ProgressDialog.js',
+                        'lib/WarningDialog.js',
                         'lib/convert.js',
                         'lib/jszip.js',
                         'parser.js'

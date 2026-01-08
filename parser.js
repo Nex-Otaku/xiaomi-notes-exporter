@@ -121,7 +121,8 @@ if (!("xiaomiNotesParser" in window)) {
 
         async function parse() {
             if (window.location.host !== 'us.i.mi.com') {
-                alert('This extension is working only on Xiaomi Cloud site. Please go to Xiaomi Cloud site, open Notes section and try again.');
+                const warningDialog = window.warningDialog;
+                warningDialog.show();
 
                 return;
             }
